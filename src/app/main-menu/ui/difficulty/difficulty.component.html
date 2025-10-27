@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>Select Difficulty</h2>
+<mat-dialog-content>
+  <mat-radio-group
+    [value]="difficulty()"
+    (change)="difficulty.set($event.value)"
+  >
+    <mat-radio-button [value]="difficulties.EASY">Easy</mat-radio-button><br />
+    <mat-radio-button [value]="difficulties.MEDIUM">Medium</mat-radio-button><br />
+    <mat-radio-button [value]="difficulties.HARD">Hard</mat-radio-button>
+  </mat-radio-group>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" (click)="startGame()">Start</button>
+</mat-dialog-actions>

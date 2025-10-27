@@ -1,0 +1,22 @@
+.main-menu {
+  width: 100%;
+  max-width: 420px;
+  margin: 5vw auto 40px auto;
+  box-shadow: 0 6px 32px rgba(30, 30, 62, 0.14);
+  border-radius: 14px;
+
+  @media (max-width: 600px) {
+    max-width: 95vw;
+    margin: 20px auto;
+    border-radius: 8px;
+  }
+  .title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 3rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: var(--mat-sys-primary);
+  }
+}

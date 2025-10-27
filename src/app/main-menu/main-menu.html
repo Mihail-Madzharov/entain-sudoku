@@ -1,0 +1,24 @@
+<mat-card class="main-menu" appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>
+      <span class="title">
+        <mat-icon color="primary">grid_on</mat-icon>
+        Sudoku
+      </span>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <p>
+      Sharpen your mind with a new puzzle!<br />
+      <span style="font-size: 0.95rem; color: #8b8b8b">
+        Choose your level and challenge yourself.
+      </span>
+    </p>
+  </mat-card-content>
+  <mat-card-actions style="justify-content: center">
+    <button mat-raised-button color="primary" (click)="openDifficultyDialog()">
+      <mat-icon style="margin-right: 8px">play_arrow</mat-icon>
+      Start New Game
+    </button>
+  </mat-card-actions>
+</mat-card>
