@@ -6,4 +6,9 @@ export const routes: Routes = [
     path: '',
     component: MainMenu,
   },
+  {
+    path: 'sudoku',
+    loadChildren: () =>
+      import('./sudoku/sudoku.routing').then((m) => m.sudokuRoutes),
+  },
 ];

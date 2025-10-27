@@ -1,0 +1,65 @@
+<div
+  class="sudoku-container"
+>
+  <mat-card>
+    <mat-card-title>Sudoku</mat-card-title>
+    <mat-card-content>
+      <table
+        class="mat-elevation-z2"
+      >
+        <tbody>
+          @for (row of store.board(); track row.length; let i = $index) {
+          <tr>
+            @for (cell of row; track cell.value; let j = $index) {
+            <td
+              [style.border-top]="
+                i % 3 === 0 ? '2.5px solid #222' : '1px solid #888'
+              "
+              [style.border-left]="
+                j % 3 === 0 ? '2.5px solid #222' : '1px solid #888'
+              "
+              [style.border-right]="j === 8 ? '2.5px solid #222' : ''"
+              [style.border-bottom]="i === 8 ? '2.5px solid #222' : ''"
+              [style.background]="cell.editable ? '#eaf4fa' : '#fff'"
+            >
+              <div>
+                @if (!cell.editable) {
+                <span>{{
+                  cell.value > 0 ? cell.value : ""
+                }}</span>
+                } @else {
+                <input
+                  matInput
+                  type="text"
+                  maxlength="1"
+                  [value]="cell.value > 0 ? cell.value : ''"
+                  (input)="onCellInput(i, j, $event.target.value)"
+                  autocomplete="off"
+                />
+                }
+              </div>
+            </td>
+            }
+          </tr>
+          }
+        </tbody>
+      </table>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="checkSolution()">
+        Validate
+      </button>
+      <button mat-raised-button color="accent" (click)="solveSudoku()">Solve</button>
+    </mat-card-actions>
+  </mat-card>
+
+  <ng-template #invalidSudokuDialog>
+    <h2 mat-dialog-title>Invalid Sudoku</h2>
+    <mat-dialog-content>
+      <p>Your solution is invalid. Please check your entries and try again.</p>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <button mat-button mat-dialog-close>OK</button>
+    </mat-dialog-actions>
+  </ng-template>
+</div>

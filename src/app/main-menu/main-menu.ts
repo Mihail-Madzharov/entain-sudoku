@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { DifficultyDialogComponent } from './ui/difficulty/difficulty.component';
 import { MatButtonModule } from '@angular/material/button';
 import { lastValueFrom } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main-menu',
@@ -23,13 +24,14 @@ import { lastValueFrom } from 'rxjs';
 })
 export class MainMenu {
   dialog = inject(MatDialog);
+  router = inject(Router);
 
   async openDifficultyDialog() {
     const result = await lastValueFrom(
       this.dialog.open(DifficultyDialogComponent).afterClosed()
     );
     if (result) {
-      console.log(result);
+      this.router.navigate(['/sudoku', result.difficulty]);
     }
   }
 }
