@@ -14,14 +14,14 @@ import { MatDialogModule } from '@angular/material/dialog';
 export class SudokuComponent {
   public store = inject(SudokuStore);
 
-  onCellInput(i: number, j: number, value: string) {
-    this.store.updateBoard(i, j, parseInt(value));
+  onCellInput(rowIndex: number, cellIndex: number, value: string) {
+    this.store.updateBoard(rowIndex, cellIndex, value ? +value : 0);
   }
 
   checkSolution() {
     this.store.validateBoard();
   }
-  
+
   solveSudoku() {
     this.store.solveBoard();
   }

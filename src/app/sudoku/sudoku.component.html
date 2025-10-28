@@ -8,19 +8,20 @@
         class="mat-elevation-z2"
       >
         <tbody>
-          @for (row of store.board(); track row.length; let i = $index) {
+          @for (row of store.board(); track row.length; let rowIndex = $index) {
           <tr>
-            @for (cell of row; track cell.value; let j = $index) {
+            @for (cell of row; track cell.value; let cellIndex = $index) {
             <td
               [style.border-top]="
-                i % 3 === 0 ? '2.5px solid #222' : '1px solid #888'
+                rowIndex % 3 === 0 ? '2.5px solid #222' : '1px solid #888'
               "
               [style.border-left]="
-                j % 3 === 0 ? '2.5px solid #222' : '1px solid #888'
+                cellIndex % 3 === 0 ? '2.5px solid #222' : '1px solid #888'
               "
-              [style.border-right]="j === 8 ? '2.5px solid #222' : ''"
-              [style.border-bottom]="i === 8 ? '2.5px solid #222' : ''"
+              [style.border-right]="cellIndex === 8 ? '2.5px solid #222' : ''"
+              [style.border-bottom]="rowIndex === 8 ? '2.5px solid #222' : ''"
               [style.background]="cell.editable ? '#eaf4fa' : '#fff'"
+              [class.invalid]="!cell.valid"
             >
               <div>
                 @if (!cell.editable) {
@@ -33,7 +34,7 @@
                   type="text"
                   maxlength="1"
                   [value]="cell.value > 0 ? cell.value : ''"
-                  (input)="onCellInput(i, j, $event.target.value)"
+                  (input)="onCellInput(rowIndex, cellIndex, $event.target.value)"
                   autocomplete="off"
                 />
                 }

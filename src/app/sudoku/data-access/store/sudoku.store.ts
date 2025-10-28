@@ -14,8 +14,6 @@ import { inject } from '@angular/core';
 import { switchMap, tap } from 'rxjs';
 import { mapResponse } from '@ngrx/operators';
 import { map } from 'rxjs/operators';
-import { ActivatedRoute, Router } from '@angular/router';
-import { encodeParams } from '../utils/funtions';
 
 export const sudokuEvents = eventGroup({
   source: 'Books API',
@@ -27,8 +25,7 @@ export const sudokuEvents = eventGroup({
     boardValidatedSuccess: type<{ valid: boolean }>(),
     boardValidatedFailure: type<string>(),
     updateBoard: type<Cell[][]>(),
-    solveBoard: type<Cell[][]>(),
-    solveBoardSuccess: type<{ board: number[][] }>(),
+    solveBoardSuccess: type<number[][]>(),
     solveBoardFailure: type<string>(),
   },
 });
@@ -40,16 +37,16 @@ export interface Cell {
 }
 
 export const SudokuStore = signalStore(
-  withState<{ difficulty: Difficulty; board: Cell[][]; loading: boolean }>({
+  withState<{
+    difficulty: Difficulty;
+    board: Cell[][];
+    loading: boolean;
+    solvedBoard: number[][];
+  }>({
     difficulty: Difficulty.MEDIUM,
-    board: Array.from({ length: 9 }, () =>
-      Array.from({ length: 9 }, () => ({
-        value: 0,
-        editable: true,
-        valid: true,
-      }))
-    ),
+    board: [],
     loading: false,
+    solvedBoard: [],
   }),
   withReducer(
     on(sudokuEvents.loadBoard, (state) => {
@@ -81,13 +78,7 @@ export const SudokuStore = signalStore(
     on(sudokuEvents.solveBoardSuccess, (event, state) => {
       return {
         ...state,
-        board: event.payload.board.map((row) =>
-          row.map((cell) => ({
-            value: cell,
-            editable: false,
-            valid: true,
-          }))
-        ),
+        solvedBoard: event.payload,
         loading: false,
       };
     })
@@ -136,7 +127,7 @@ export const SudokuStore = signalStore(
             )
         )
       ),
-      solveBoard$: events.on(sudokuEvents.solveBoard).pipe(
+      solveBoard$: events.on(sudokuEvents.boardLoadedSuccess).pipe(
         switchMap((event) =>
           sudokuService
             .solveSudokuBoard(
@@ -145,7 +136,7 @@ export const SudokuStore = signalStore(
             .pipe(
               mapResponse({
                 next: ({ solution }) => {
-                  return sudokuEvents.solveBoardSuccess({ board: solution });
+                  return sudokuEvents.solveBoardSuccess(solution);
                 },
                 error: (error: { message: string }) =>
                   sudokuEvents.solveBoardFailure(error.message),
@@ -161,20 +152,34 @@ export const SudokuStore = signalStore(
     },
     updateBoard: (i: number, j: number, value: number) => {
       dispatch.updateBoard(
-        state
-          .board()
-          .map((row, rowIdx) =>
-            row.map((cell, colIdx) =>
-              rowIdx === i && colIdx === j ? { ...cell, value } : cell
-            )
-          )
+        state.board().map((row, rowIdx) =>
+          row.map((cell, colIdx) => {
+            if (rowIdx === i && colIdx === j) {
+              return {
+                ...cell,
+                value,
+                valid: value === 0 ? true : state.solvedBoard()[i][j] === value,
+              };
+            } else {
+              return { ...cell };
+            }
+          })
+        )
       );
     },
     validateBoard: () => {
       dispatch.validateBoard(state.board());
     },
     solveBoard: () => {
-      dispatch.solveBoard(state.board());
+      dispatch.updateBoard(
+        state.solvedBoard().map((row, i) =>
+          row.map((value) => ({
+            value,
+            editable: false,
+            valid: true,
+          }))
+        )
+      );
     },
   }))
 );

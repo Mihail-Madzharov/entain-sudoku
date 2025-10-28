@@ -40,14 +40,10 @@ export class SudokuService {
       difficulty: string;
       solution: number[][];
       status: string;
-    }>(
-      `https://sugoku.onrender.com/solve`,
-      { board: encodeURIComponent(JSON.stringify(board)) },
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      }
-    );
+    }>(`https://sugoku.onrender.com/solve`, encodeParams({ board }), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
   }
 }
