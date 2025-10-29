@@ -10,13 +10,8 @@ import { Status } from '../models/status.enum';
 })
 export class SudokuService {
   #http = inject(HttpClient);
-  /**
-   * Returns a mocked sudoku board as a 9x9 number array.
-   * 0 represents empty cells.
-   */
-  getSudokuBoard(difficulty: Difficulty): Observable<{ board: number[][] }> {
-    // Mocked board can be randomized or static. Here is a static example for now.
 
+  getSudokuBoard(difficulty: Difficulty): Observable<{ board: number[][] }> {
     return this.#http.get<{ board: number[][] }>(
       `https://sugoku.onrender.com/board?difficulty=${difficulty}`
     );
