@@ -30,6 +30,7 @@ export class MainMenu {
     const result = await lastValueFrom(
       this.dialog.open(DifficultyDialogComponent).afterClosed()
     );
+
     if (result) {
       this.router.navigate(['/sudoku', result.difficulty]);
     }
