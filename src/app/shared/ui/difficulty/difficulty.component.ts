@@ -4,7 +4,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatButtonModule } from '@angular/material/button';
 
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { Difficulty } from '../../data-access/enums/dificulty.enum';
+import { Difficulty } from '../../models/dificulty.enum';
 
 @Component({
   selector: 'app-difficulty',

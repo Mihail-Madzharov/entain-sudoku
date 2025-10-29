@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { Difficulty } from '../../../main-menu/data-access/enums/dificulty.enum';
+import { Difficulty } from '../../../shared/models/dificulty.enum';
 import { HttpClient } from '@angular/common/http';
 import { encodeParams } from '../utils/funtions';
+import { Status } from '../models/status.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -21,8 +22,8 @@ export class SudokuService {
     );
   }
 
-  validateSudokuBoard(board: number[][]): Observable<{ valid: boolean }> {
-    return this.#http.post<{ valid: boolean }>(
+  validateSudokuBoard(board: number[][]): Observable<{ status: Status }> {
+    return this.#http.post<{ status: Status }>(
       `https://sugoku.onrender.com/validate`,
       encodeParams({ board }),
       {

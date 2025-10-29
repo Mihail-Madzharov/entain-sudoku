@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { DifficultyDialogComponent } from './ui/difficulty/difficulty.component';
+import { DifficultyDialogComponent } from '../shared/ui/difficulty/difficulty.component';
 import { MatButtonModule } from '@angular/material/button';
 import { lastValueFrom } from 'rxjs';
 import { Router } from '@angular/router';

@@ -1,12 +1,29 @@
-<div
-  class="sudoku-container"
->
+<div class="sudoku-container">
   <mat-card>
-    <mat-card-title>Sudoku</mat-card-title>
+    <mat-card-title>
+      Sudoku - {{ store.difficulty() }}
+      <span class="life-counter" style="float: right; font-size: 18px">
+        Lives: @for (life of [].constructor(store.lives()); track life) {
+        <mat-icon color="warn" aria-label="life" style="vertical-align: middle"
+          >favorite</mat-icon
+        >
+        } @for (lost of [].constructor(3 - store.lives()); track lost) {
+        <mat-icon
+          color="disabled"
+          aria-label="lost-life"
+          style="vertical-align: middle"
+          >favorite_border</mat-icon
+        >
+        }
+      </span>
+    </mat-card-title>
     <mat-card-content>
-      <table
-        class="mat-elevation-z2"
-      >
+      @if (store.loading()) {
+      <div class="loading-overlay">
+        <mat-spinner diameter="60"></mat-spinner>
+      </div>
+      } @else {
+      <table class="mat-elevation-z2">
         <tbody>
           @for (row of store.board(); track row.length; let rowIndex = $index) {
           <tr>
@@ -25,16 +42,16 @@
             >
               <div>
                 @if (!cell.editable) {
-                <span>{{
-                  cell.value > 0 ? cell.value : ""
-                }}</span>
+                <span>{{ cell.value > 0 ? cell.value : "" }}</span>
                 } @else {
                 <input
                   matInput
                   type="text"
                   maxlength="1"
                   [value]="cell.value > 0 ? cell.value : ''"
-                  (input)="onCellInput(rowIndex, cellIndex, $event.target.value)"
+                  (input)="
+                    onCellInput(rowIndex, cellIndex, $event.target.value)
+                  "
                   autocomplete="off"
                 />
                 }
@@ -45,22 +62,66 @@
           }
         </tbody>
       </table>
+      }
     </mat-card-content>
     <mat-card-actions>
-      <button mat-raised-button color="primary" (click)="checkSolution()">
-        Validate
+      <button mat-button (click)="goBack()">Back</button>
+      <button mat-button (click)="checkSolution()">Verify</button>
+      <button mat-raised-button color="accent" (click)="solveSudoku()">
+        Solve
       </button>
-      <button mat-raised-button color="accent" (click)="solveSudoku()">Solve</button>
     </mat-card-actions>
   </mat-card>
 
-  <ng-template #invalidSudokuDialog>
+  <ng-template #endGameDialog>
     <h2 mat-dialog-title>Invalid Sudoku</h2>
     <mat-dialog-content>
       <p>Your solution is invalid. Please check your entries and try again.</p>
     </mat-dialog-content>
     <mat-dialog-actions>
-      <button mat-button mat-dialog-close>OK</button>
+      <button mat-button mat-dialog-close>Back to Main Menu</button>
+      <button mat-button mat-dialog-close (click)="newGame()">New Game</button>
+    </mat-dialog-actions>
+  </ng-template>
+
+  <ng-template #unsolvedSudokuDialog>
+    <h2 mat-dialog-title>Not Solved</h2>
+    <mat-dialog-content>
+      <p>The Sudoku has not been solved.</p>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <button mat-button mat-dialog-close (click)="goBack()">Back to Main Menu</button>
+      <button mat-button mat-dialog-close (click)="newGame()">New Game</button>
+      <button mat-button mat-dialog-close (click)="checkSolution()">Continue</button>
+    </mat-dialog-actions>
+  </ng-template>
+
+  <ng-template #solvedSudokuDialog>
+    <h2 mat-dialog-title>Sudoku Solved</h2>
+    <mat-dialog-content>
+      <p>Great job! The Sudoku has been solved.</p>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <button mat-button mat-dialog-close (click)="confirmBack()">
+        Back to main menu
+      </button>
+      <button mat-button mat-dialog-close (click)="newGame()">New Game</button>
+    </mat-dialog-actions>
+  </ng-template>
+
+  <ng-template #confirmBackDialog>
+    <h2 mat-dialog-title>Leave Game?</h2>
+    <mat-dialog-content>
+      <p>
+        You haven't finished the game yet. Are you sure you want to go back to
+        the main menu?
+      </p>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <button mat-button mat-dialog-close>Cancel</button>
+      <button mat-button mat-dialog-close (click)="confirmBack()">
+        Back to main menu
+      </button>
     </mat-dialog-actions>
   </ng-template>
 </div>
