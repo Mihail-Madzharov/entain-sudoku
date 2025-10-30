@@ -45,21 +45,21 @@ export class SudokuComponent {
   unsolvedSudokuDialog = viewChild<TemplateRef<any>>('unsolvedSudokuDialog');
   confirmBackDialog = viewChild<TemplateRef<any>>('confirmBackDialog');
 
-  userLivesHandler = rxMethod<number>(
+  userLivesHandler = rxMethod<Status>(
     pipe(
-      filter((lives) => lives === 0),
+      filter((status) => status === Status.gameOver),
       switchMap(() => this.dialog.open(this.endGameDialog()!).afterClosed())
     )
   );
 
-  solvedHandler = rxMethod<Status | null>(
+  solvedHandler = rxMethod<Status>(
     pipe(
       filter((solved) => solved === Status.solved),
       switchMap(() => this.dialog.open(this.solvedDialog()!).afterClosed())
     )
   );
 
-  unsolvedHandler = rxMethod<Status | null>(
+  unsolvedHandler = rxMethod<Status>(
     pipe(
       filter((solved) => solved === Status.unsolved),
       switchMap(() =>
@@ -68,7 +68,7 @@ export class SudokuComponent {
     )
   );
 
-  userLivesOverListener = this.userLivesHandler(this.store.lives);
+  userLivesOverListener = this.userLivesHandler(this.store.solved);
   solvedListener = this.solvedHandler(this.store.solved);
   unsolvedListener = this.unsolvedHandler(this.store.solved);
 

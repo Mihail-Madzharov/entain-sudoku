@@ -2,7 +2,6 @@ import {
   signalStore,
   type,
   withState,
-  withHooks,
   withMethods,
   patchState,
 } from '@ngrx/signals';
@@ -24,13 +23,12 @@ export const sudokuEvents = eventGroup({
     boardLoadedSuccess: type<Cell[][]>(),
     boardLoadedFailure: type<string>(),
     validateBoard: type<Cell[][]>(),
-    boardValidatedSuccess: type<{ status: Status }>(),
+    updateStatus: type<{ status: Status }>(),
     boardValidatedFailure: type<string>(),
     updateBoard: type<{ row: number; col: number; value: number }>(),
     solveBoardSuccess: type<number[][]>(),
     solveBoardFailure: type<string>(),
-    decrementLives: type<number>(),
-    gameOver: type<boolean>(),
+    decrementLives: type<void>(),
   },
 });
 
@@ -41,21 +39,20 @@ export const SudokuStore = signalStore(
     loading: boolean;
     solvedBoard: number[][];
     lives: number;
-    gameOver: boolean;
-    solved: Status | null;
+    solved: Status;
   }>({
     difficulty: Difficulty.MEDIUM,
     board: [],
     loading: false,
     solvedBoard: [],
     lives: 3,
-    gameOver: false,
-    solved: null,
+    solved: Status.idle,
   }),
   withReducer(
-    on(sudokuEvents.loadBoard, (state) => {
+    on(sudokuEvents.loadBoard, (event,state) => {
       return {
         ...state,
+        difficulty: event.payload,
         loading: true,
       };
     }),
@@ -64,7 +61,7 @@ export const SudokuStore = signalStore(
         ...state,
         board: event.payload,
         loading: false,
-        gameOver: false,
+        solved: Status.idle,
         lives: 3,
       };
     }),
@@ -105,19 +102,13 @@ export const SudokuStore = signalStore(
         loading: false,
       };
     }),
-    on(sudokuEvents.decrementLives, (event, state) => {
+    on(sudokuEvents.decrementLives, (_, state) => {
       return {
         ...state,
         lives: state.lives - 1,
       };
     }),
-    on(sudokuEvents.gameOver, (event, state) => {
-      return {
-        ...state,
-        gameOver: event.payload,
-      };
-    }),
-    on(sudokuEvents.boardValidatedSuccess, (event, state) => {
+    on(sudokuEvents.updateStatus, (event, state) => {
       return {
         ...state,
         solved: event.payload.status,
@@ -161,7 +152,7 @@ export const SudokuStore = signalStore(
             .pipe(
               mapResponse({
                 next: (asyncResponse) => {
-                  return sudokuEvents.boardValidatedSuccess({
+                  return sudokuEvents.updateStatus({
                     status: asyncResponse.status,
                   });
                 },
@@ -196,7 +187,7 @@ export const SudokuStore = signalStore(
           return value !== 0 && solvedBoardValue !== value;
         }),
         map(() => {
-          return sudokuEvents.decrementLives(1);
+          return sudokuEvents.decrementLives();
         })
       ),
       checkLives$: events.on(sudokuEvents.decrementLives).pipe(
@@ -204,7 +195,7 @@ export const SudokuStore = signalStore(
           return state.lives() === 0;
         }),
         map(() => {
-          return sudokuEvents.gameOver(true);
+          return sudokuEvents.updateStatus({ status: Status.gameOver });
         })
       ),
     })

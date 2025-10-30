@@ -65,7 +65,7 @@ describe('SudokuStore', () => {
     expect(board[0][0].editable).toBeTrue();
     expect(board[0][1].editable).toBeFalse();
     expect(store.loading()).toBeFalse();
-    expect(store.gameOver()).toBeFalse();
+    expect(store.solved()).toBe(Status.idle);
     expect(store.lives()).toBe(3);
     expect(solved).toEqual(solution);
   });
@@ -100,7 +100,7 @@ describe('SudokuStore', () => {
     store.updateBoard(0, 0, 7);
 
     expect(store.lives()).toBe(0);
-    expect(store.gameOver()).toBeTrue();
+    expect(store.solved()).toBe(Status.gameOver);
   });
 
   it('validateBoard should set solved status from service response', () => {
